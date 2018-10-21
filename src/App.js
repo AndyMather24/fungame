@@ -1,46 +1,70 @@
 import React, { Component } from 'react';
 import './App.css';
-import Grid from './components/board'
+import Stone from './components/Stone'
 
 class App extends Component {
   state = {
-    x: true,
-    grid: [null, null, null, null, null, null, null, null, null]
+    x:true,
+    grid: Array.from({ length: 9 }, () => null)
+    //[null,null,null,null,null,null,null,null,null]
   };
   render() {
-    console.log('hiiiii');
     return (
-      <div className="grid-container">
-        {
-          this.state.grid.map((stone, index) => <Grid stone={stone} key={index} index={index} handleClick={this.handleClick} />)
-        }
-        <input type='text' onChange={this.createBoard} />
-        <input onClick={this.startGame} type="submit" name="Start" />
+      <div className="App">
+        <h1>Noughts and Crosses</h1>
+        <div className="grid-container">
+          {this.state.grid.map((stone,index) => (
+            <Stone key={index} stone={stone} index={index} 
+            handleClick={this.handleClick}/>
+          ))}
+        </div>
+        <p>Enter size of Grid:</p>
+      <input onChange={this.createGrid} type="text" name="gridSize" id=""/>
+      <br/>
+      <input type="submit" value="clear Board" onClick={this.clearGrid}/>
       </div>
     );
   }
-  handleClick = (index) => {
-
-    const newgrid = [...this.state.grid];
-    newgrid[index] = this.state.x ? 'X' : 'O'
+  handleClick=(index)=>{
+    const gridFull = this.state.grid.filter(stone => stone === null)
+    // below needs to get triggered after last null become x|o
+    // if(gridFull.length === 0) alert('Game over')
+    const newGrid = [...this.state.grid]
+    if(this.state.grid[index] === null) {
+         newGrid[index]= this.state.x?"X":"O"
+   
+    // else{
+    //   alert("select an empty stone");
+    // }
     this.setState({
-      grid: newgrid,
+      grid: newGrid,
       x: !this.state.x
     })
+    }
+    else{
+      alert("select an empty stone")
+    }
   }
-  startGame = () => {
-    const clearBoard = [null, null, null, null, null, null, null, null, null]
+  createGrid=(e)=>{
+    // console.log(typeof e.target.value) //string
+    console.log(e.target.value);
+    // if(Number(e.taregt.value) < 9 ){
+    //   this.setState({
+    //     grid: [null, null, null, null, null, null, null, null, null]
+    //   })
+    // }
+    const newSize = Array.from({ length: +e.target.value }, () => null)
     this.setState({
-      grid: clearBoard
+      grid: newSize
     })
   }
-  createBoard = (e) => {
-    const Arr = [...this.state.grid];
-    const gridSize = Array.from({ length: +e.target.value }, () => null);
+  clearGrid=()=>{
+    const clear = Array.from({length: this.state.grid.length},()=>null)
     this.setState({
-      grid: gridSize
+      grid: clear
     })
   }
 }
+
 
 export default App;
